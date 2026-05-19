@@ -1,11 +1,46 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/AI-Powered-6366f1?style=for-the-badge&logo=openai&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" />
+<img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+<img src="https://img.shields.io/badge/Groq-Llama_3.3-f59e0b?style=for-the-badge" />
+<img src="https://img.shields.io/badge/PostgreSQL-Neon-00E599?style=for-the-badge&logo=postgresql&logoColor=white" />
+
+<br/><br/>
+
 # 🤖 AI Code Review System
 
-> Full-stack AI-powered code review using **Spring Boot + React + Groq API (Llama 3)**
+### An intelligent code review platform powered by Groq's Llama 3.3 — built with Spring Boot & React
 
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
-![React](https://img.shields.io/badge/React-18-blue)
-![Groq](https://img.shields.io/badge/AI-Groq%20Llama%203-purple)
+[Live Demo](#) · [Report Bug](../../issues) · [Request Feature](../../issues)
+
+<br/>
+
+![App Screenshot](https://placehold.co/900x500/0d1526/6366f1?text=AI+Code+Review+System&font=montserrat)
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [About](#-about)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Getting Started](#-getting-started)
+- [API Reference](#-api-reference)
+- [Deployment](#-deployment)
+- [Project Structure](#-project-structure)
+- [Screenshots](#-screenshots)
+
+---
+
+## 🧠 About
+
+**AI Code Review System** is a full-stack web application that uses large language models to review your code in seconds. Paste any code snippet, select the language, and get back a structured review with bug detection, security warnings, performance insights, and a quality score — all powered by **Groq's Llama 3.3 70B** model running at blazing speed.
+
+Built as a portfolio project showcasing real-world integration of AI APIs, Spring Boot backend design, JWT authentication, and a modern React frontend.
 
 ---
 
@@ -13,87 +48,231 @@
 
 | Feature | Description |
 |---|---|
-| 🔍 **AI Code Review** | Bugs, security issues, performance, suggestions via Groq Llama 3 |
-| 📊 **Score Cards** | Quality, Readability, Security, Performance — all scored 0–100 |
-| ✨ **AI Refactor** | One-click AI rewrites of your code |
-| 📄 **PDF Reports** | Download beautiful PDF review reports |
-| 🕒 **History** | All reviews stored with full history |
-| 📊 **Dashboard** | Analytics, language breakdown, score trends |
-| 🔐 **JWT Auth** | Secure login/register |
-| 🖊️ **Monaco Editor** | VS Code-quality code editor in the browser |
+| 🔍 **AI Code Review** | Detects bugs, security issues, and anti-patterns using Llama 3.3 70B |
+| 📊 **Score Dashboard** | Quality, Readability, Security, and Performance scores (0–100) |
+| ✨ **AI Refactor** | One-click AI rewrite of your code following best practices |
+| 📄 **PDF Reports** | Download a formatted PDF of any review |
+| 🕒 **Review History** | All reviews persisted in PostgreSQL with full pagination |
+| 📈 **Analytics** | Dashboard with charts showing review trends by language |
+| 🔐 **JWT Auth** | Secure register/login with BCrypt password hashing |
+| 🖊️ **Monaco Editor** | VS Code's editor embedded in the browser with syntax highlighting |
 | 🌐 **Multi-language** | Java, Python, JavaScript, TypeScript, C++, Go, Rust, Kotlin |
+
+---
+
+## 🛠️ Tech Stack
+
+**Backend**
+- Java 17 + Spring Boot 3.2
+- Spring Security + JWT (jjwt 0.12)
+- Spring Data JPA + Hibernate
+- PostgreSQL (Neon) / H2 (dev)
+- iText 5 (PDF generation)
+- Java HttpClient (Groq API calls)
+
+**Frontend**
+- React 18 + React Router 6
+- Monaco Editor (`@monaco-editor/react`)
+- Recharts (analytics dashboard)
+- Axios + React Hot Toast
+- Custom dark theme (CSS variables)
+
+**AI & Infra**
+- Groq API — Llama 3.3 70B Versatile (free tier)
+- Neon PostgreSQL (free tier)
+- Render (backend hosting — free tier)
+- Vercel (frontend hosting — free tier)
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-React Frontend (Vercel)
-       ↓ HTTPS
-Spring Boot API (Render/Railway)
-       ↓
-Groq AI API (Llama 3-70B — FREE tier)
-       ↓
-PostgreSQL (Neon — FREE tier)
+┌─────────────────────────────────────────────────────┐
+│                  React Frontend                      │
+│         Monaco Editor · Recharts · Axios            │
+└───────────────────────┬─────────────────────────────┘
+                        │ HTTPS / REST
+┌───────────────────────▼─────────────────────────────┐
+│              Spring Boot Backend                     │
+│                                                      │
+│  AuthController    ReviewController                  │
+│       │                  │                           │
+│  AuthService       CodeReviewService                 │
+│       │                  │                           │
+│  JWT + BCrypt      GroqAiService ──────────────────► Groq API
+│                          │                           │  (Llama 3.3)
+│                    PdfReportService                  │
+│                          │                           │
+└───────────────────────┬──┼──────────────────────────┘
+                        │  │
+┌───────────────────────▼──▼──────────────────────────┐
+│           Neon PostgreSQL Database                   │
+│              users · code_reviews                    │
+└─────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 ### Prerequisites
+
 - Java 17+
 - Node.js 18+
 - Maven 3.8+
-- Free [Groq API key](https://console.groq.com)
+- Free [Groq API key](https://console.groq.com) — generous free tier, no credit card
 
----
+### 1. Clone the Repository
 
-### 1. Clone & Configure Backend
+```bash
+git clone https://github.com/YOUR_USERNAME/ai-code-review.git
+cd ai-code-review
+```
+
+### 2. Configure Backend
 
 ```bash
 cd backend
 ```
 
-Edit `src/main/resources/application.properties`:
+Open `src/main/resources/application.properties` and set your Groq key:
+
 ```properties
-# Add your Groq API key (free at console.groq.com)
-groq.api.key=gsk_YOUR_KEY_HERE
+groq.api.key=gsk_your_key_here
+groq.api.url=https://api.groq.com/openai/v1/chat/completions
+groq.model=llama-3.3-70b-versatile
 ```
 
-### 2. Run Backend
+### 3. Run Backend
 
 ```bash
-./mvnw spring-boot:run
-# or
 mvn spring-boot:run
 ```
 
-Backend runs at: **http://localhost:8080**
-H2 Console: **http://localhost:8080/h2-console**
+Backend starts at **http://localhost:8080**
+H2 Console (dev): **http://localhost:8080/h2-console**
 
----
-
-### 3. Run Frontend
+### 4. Run Frontend
 
 ```bash
-cd frontend
+cd ../frontend
 npm install
 npm start
 ```
 
-Frontend runs at: **http://localhost:3000**
+Frontend starts at **http://localhost:3000**
+
+### 5. Register & Start Reviewing
+
+Open **http://localhost:3000**, create an account, and submit your first code review!
 
 ---
 
-## 🔑 Getting Your FREE Groq API Key
+## 🔑 Getting a Free Groq API Key
 
-1. Go to [console.groq.com](https://console.groq.com)
-2. Create a free account
-3. Generate an API key
-4. Paste it into `application.properties`
+1. Visit **[console.groq.com](https://console.groq.com)**
+2. Sign up — no credit card required
+3. Go to **API Keys** → **Create API Key**
+4. Copy the key (starts with `gsk_`) and paste into `application.properties`
 
-**Free tier:** Very generous — ~14,400 requests/day with Llama 3-70B
+**Free tier limits:** ~14,400 requests/day with Llama 3.3 70B — more than enough for development and demos.
+
+---
+
+## 📡 API Reference
+
+All protected endpoints require `Authorization: Bearer <token>` header.
+
+### Auth
+
+| Method | Endpoint | Body | Response |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | `{username, email, password}` | `{token, username, email}` |
+| `POST` | `/api/auth/login` | `{username, password}` | `{token, username, email}` |
+
+### Reviews
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/reviews` | Submit code for AI review |
+| `GET` | `/api/reviews/history` | Paginated review history |
+| `GET` | `/api/reviews/:id` | Get a specific review |
+| `POST` | `/api/reviews/:id/refactor` | AI refactor the code |
+| `GET` | `/api/reviews/:id/pdf` | Download PDF report |
+| `DELETE` | `/api/reviews/:id` | Delete a review |
+| `GET` | `/api/reviews/dashboard` | Stats and analytics |
+
+### Example Request & Response
+
+```bash
+POST /api/reviews
+Authorization: Bearer eyJhbGci...
+
+{
+  "language": "java",
+  "code": "public class Calculator { public int divide(int a, int b) { return a/b; } }"
+}
+```
+
+```json
+{
+  "id": 42,
+  "language": "java",
+  "qualityScore": 55,
+  "readabilityScore": 70,
+  "securityScore": 60,
+  "performanceScore": 80,
+  "summary": "The code is functional but lacks input validation and error handling.",
+  "issues": [
+    "Division by zero not handled — will throw ArithmeticException at runtime",
+    "No input validation on parameters"
+  ],
+  "suggestions": [
+    "Add a check for b == 0 and throw IllegalArgumentException",
+    "Consider returning Optional<Integer> for safer API design"
+  ],
+  "securityWarnings": [],
+  "performanceNotes": ["Method is O(1) — optimal for this operation"]
+}
+```
+
+---
+
+## ☁️ Deployment (100% Free)
+
+### Database → Neon PostgreSQL
+
+1. Go to **[neon.tech](https://neon.tech)** → Create project
+2. Copy the JDBC connection string
+3. Update `application.properties`:
+
+```properties
+spring.datasource.url=jdbc:postgresql://ep-xxx.neon.tech/neondb?sslmode=require
+spring.datasource.username=your_user
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+```
+
+### Backend → Render
+
+1. Push to GitHub
+2. Go to **[render.com](https://render.com)** → New Web Service → Connect repo
+3. Build command: `mvn clean package -DskipTests`
+4. Start command: `java -jar target/ai-code-review-1.0.0.jar`
+5. Add environment variables:
+   - `GROQ_API_KEY`
+   - `SPRING_DATASOURCE_URL`
+   - `SPRING_DATASOURCE_USERNAME`
+   - `SPRING_DATASOURCE_PASSWORD`
+
+### Frontend → Vercel
+
+1. `cd frontend && npm run build`
+2. Push to GitHub
+3. Import to **[vercel.com](https://vercel.com)**
+4. Set env var: `REACT_APP_API_URL=https://your-backend.onrender.com/api`
 
 ---
 
@@ -104,161 +283,69 @@ ai-code-review/
 ├── backend/
 │   ├── pom.xml
 │   └── src/main/java/com/codereview/
-│       ├── AiCodeReviewApplication.java   ← Entry point
+│       ├── AiCodeReviewApplication.java
+│       ├── ai/
+│       │   ├── GroqAiService.java          # Groq API integration
+│       │   └── AiResponseParser.java       # Parse AI JSON response
 │       ├── controller/
-│       │   ├── AuthController.java        ← /api/auth/*
-│       │   └── ReviewController.java      ← /api/reviews/*
+│       │   ├── AuthController.java         # /api/auth/*
+│       │   └── ReviewController.java       # /api/reviews/*
 │       ├── service/
 │       │   ├── AuthService.java
-│       │   ├── CodeReviewService.java     ← Core business logic
-│       │   ├── CustomUserDetailsService.java
-│       │   └── PdfReportService.java
-│       ├── ai/
-│       │   ├── GroqAiService.java         ← Groq API integration
-│       │   └── AiResponseParser.java      ← Parse AI JSON response
+│       │   ├── CodeReviewService.java      # Core business logic
+│       │   └── PdfReportService.java       # PDF generation
 │       ├── entity/
 │       │   ├── User.java
 │       │   └── CodeReview.java
-│       ├── dto/
-│       │   ├── AuthDto.java
-│       │   └── ReviewDto.java
-│       ├── repository/
-│       │   ├── UserRepository.java
-│       │   └── CodeReviewRepository.java
 │       ├── security/
 │       │   ├── JwtUtils.java
 │       │   └── JwtAuthFilter.java
 │       └── config/
-│           ├── SecurityConfig.java
-│           └── AppConfig.java
+│           └── SecurityConfig.java
 │
 └── frontend/
-    ├── package.json
     └── src/
-        ├── App.js                         ← Routes
-        ├── index.js
-        ├── hooks/
-        │   └── useAuth.js                 ← Auth context
-        ├── utils/
-        │   └── api.js                     ← Axios API client
+        ├── App.js                          # Routes
+        ├── hooks/useAuth.js                # Auth context
+        ├── utils/api.js                    # Axios client
         ├── components/
-        │   ├── Layout.jsx                 ← Sidebar + nav
-        │   └── ScoreCards.jsx
-        ├── pages/
-        │   ├── LoginPage.jsx
-        │   ├── RegisterPage.jsx
-        │   ├── DashboardPage.jsx
-        │   ├── ReviewPage.jsx             ← Monaco editor + submit
-        │   ├── ReviewDetailPage.jsx       ← Full review view
-        │   └── HistoryPage.jsx
-        └── styles/
-            └── globals.css               ← Dark theme design system
+        │   ├── Layout.jsx                  # Sidebar navigation
+        │   └── ScoreCards.jsx              # Score display
+        └── pages/
+            ├── LoginPage.jsx
+            ├── RegisterPage.jsx
+            ├── DashboardPage.jsx           # Analytics + charts
+            ├── ReviewPage.jsx              # Monaco editor
+            ├── ReviewDetailPage.jsx        # Full review view
+            └── HistoryPage.jsx             # Review history table
 ```
 
 ---
 
-## 🌐 API Reference
+## 🎯 What This Project Demonstrates
 
-### Auth
+This project was built to showcase production-level full-stack skills:
 
-| Method | Endpoint | Body | Description |
-|---|---|---|---|
-| POST | `/api/auth/register` | `{username, email, password}` | Register |
-| POST | `/api/auth/login` | `{username, password}` | Login → JWT |
-
-### Reviews (requires `Authorization: Bearer <token>`)
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/reviews` | Submit code for review |
-| GET | `/api/reviews/history` | Paginated history |
-| GET | `/api/reviews/:id` | Get review by ID |
-| POST | `/api/reviews/:id/refactor` | AI refactor the code |
-| GET | `/api/reviews/:id/pdf` | Download PDF report |
-| DELETE | `/api/reviews/:id` | Delete review |
-| GET | `/api/reviews/dashboard` | Stats & analytics |
+- **REST API design** — clean endpoints, proper HTTP status codes, global exception handling
+- **Spring Security** — stateless JWT auth, BCrypt hashing, CORS configuration
+- **AI integration** — prompt engineering, structured JSON parsing, fallback handling
+- **JPA & database design** — entity relationships, custom queries, pagination
+- **React architecture** — context API, protected routes, custom hooks, Axios interceptors
+- **PDF generation** — iText library with custom styled reports
+- **Cloud deployment** — Render + Vercel + Neon free tier stack
 
 ---
 
-## ☁️ Free Deployment Guide
+## 📄 License
 
-### Backend → Render
-
-1. Push to GitHub
-2. Go to [render.com](https://render.com) → New Web Service
-3. Connect your repo
-4. Set environment variables:
-   - `GROQ_API_KEY=your_key`
-   - `SPRING_DATASOURCE_URL=jdbc:postgresql://...` (from Neon)
-   - `SPRING_DATASOURCE_USERNAME=...`
-   - `SPRING_DATASOURCE_PASSWORD=...`
-5. Build command: `mvn clean package -DskipTests`
-6. Start command: `java -jar target/ai-code-review-1.0.0.jar`
-
-### Database → Neon (Free PostgreSQL)
-
-1. Go to [neon.tech](https://neon.tech)
-2. Create project → copy connection string
-3. Use in environment variables above
-
-### Frontend → Vercel
-
-1. `cd frontend && npm run build`
-2. Push to GitHub
-3. Import to [vercel.com](https://vercel.com)
-4. Set env var: `REACT_APP_API_URL=https://your-backend.onrender.com/api`
+MIT License — free to use, fork, and build on.
 
 ---
 
-## 🔄 Switch to PostgreSQL (Production)
+<div align="center">
 
-In `application.properties`, comment H2 and uncomment PostgreSQL lines:
+Built with ❤️ using Spring Boot, React, and Groq AI
 
-```properties
-spring.datasource.url=jdbc:postgresql://your-host:5432/codereviewdb
-spring.datasource.username=your_user
-spring.datasource.password=your_password
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-```
+⭐ Star this repo if you found it helpful!
 
----
-
-## 🧠 Prompt Engineering
-
-The AI prompt is in `GroqAiService.java`. The system asks Llama 3 to return structured JSON:
-
-```json
-{
-  "qualityScore": 75,
-  "readabilityScore": 80,
-  "securityScore": 60,
-  "performanceScore": 70,
-  "summary": "...",
-  "issues": ["..."],
-  "suggestions": ["..."],
-  "securityWarnings": ["..."],
-  "performanceNotes": ["..."]
-}
-```
-
-You can tune the prompt to be stricter, more verbose, or domain-specific.
-
----
-
-## 🎯 Resume Highlights
-
-This project demonstrates:
-- **Backend**: Spring Boot 3, Spring Security, JWT, JPA, RESTful API design
-- **AI Integration**: Groq API, prompt engineering, structured JSON parsing
-- **Frontend**: React 18, React Router, Monaco Editor (VS Code's editor), Recharts
-- **Database**: JPA entities, repositories, relational design
-- **Security**: JWT auth, BCrypt hashing, CORS, input validation
-- **DevOps**: Deployable to Render (backend), Vercel (frontend), Neon (DB)
-- **PDF Generation**: iText PDF library
-
----
-
-## 📝 License
-
-MIT — free to use, modify, and deploy.
+</div>
