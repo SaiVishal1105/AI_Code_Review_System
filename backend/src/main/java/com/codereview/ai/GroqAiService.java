@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -36,12 +35,12 @@ public class GroqAiService {
       .build();
 
   public String analyzeCode(String language, String code) {
-    log.info("Sending code review request to Groq. Model: {}, Language: {}", model, language);
+    log.info("Analyzing code. Language: {}, Model: {}", language, model);
     return callGroqApi(buildPrompt(language, code));
   }
 
   public String refactorCode(String language, String code) {
-    log.info("Sending refactor request to Groq. Language: {}", language);
+    log.info("Refactoring code. Language: {}", language);
     return callGroqApi(buildRefactorPrompt(language, code));
   }
 
@@ -49,8 +48,7 @@ public class GroqAiService {
     try {
       Map<String, Object> body = Map.of(
           "model", model,
-          "messages", List.of(
-              Map.of("role", "user", "content", prompt)),
+          "messages", List.of(Map.of("role", "user", "content", prompt)),
           "temperature", 0.3,
           "max_tokens", 2048);
 
@@ -67,60 +65,49 @@ public class GroqAiService {
       HttpResponse<String> response = httpClient.send(request,
           HttpResponse.BodyHandlers.ofString());
 
-      log.info("Groq response status: {}", response.statusCode());
+      log.info("Groq status: {}", response.statusCode());
 
       if (response.statusCode() != 200) {
-        log.error("Groq API error {}: {}", response.statusCode(), response.body());
-        throw new RuntimeException("Groq API returned " + response.statusCode() + ": " + response.body());
+        log.error("Groq error {}: {}", response.statusCode(), response.body());
+        throw new RuntimeException("Groq returned " + response.statusCode() + ": " + response.body());
       }
 
       JsonNode root = objectMapper.readTree(response.body());
       String content = root.path("choices").get(0)
           .path("message").path("content").asText();
 
-      log.info("Groq response received, length: {}", content.length());
+      log.info("Groq response OK, length: {}", content.length());
       return content;
 
     } catch (RuntimeException e) {
       throw e;
     } catch (Exception e) {
-      log.error("Groq API call failed: {}", e.getMessage(), e);
+      log.error("Groq call failed: {}", e.getMessage(), e);
       throw new RuntimeException("AI service error: " + e.getMessage());
     }
   }
 
   private String buildPrompt(String language, String code) {
-    return """
-        You are a senior software engineer and code reviewer.
-
-        Review the following %s code and respond ONLY with valid JSON — no markdown, no explanation, just the raw JSON object.
-
-        Required JSON format:
-        {
-          "qualityScore": 75,
-          "readabilityScore": 80,
-          "securityScore": 90,
-          "performanceScore": 70,
-          "summary": "Brief 1-2 sentence summary of the code quality.",
-          "issues": ["issue 1", "issue 2"],
-          "suggestions": ["suggestion 1", "suggestion 2"],
-          "securityWarnings": ["warning 1"],
-          "performanceNotes": ["note 1"]
-        }
-
-        Code to review:
-        %s
-        """
-        .formatted(language, code);
+    return "You are a senior software engineer.\n\n" +
+        "Review this " + language + " code. Reply ONLY with a valid JSON object, no markdown, no extra text.\n\n" +
+        "JSON format:\n" +
+        "{\n" +
+        "  \"qualityScore\": 75,\n" +
+        "  \"readabilityScore\": 80,\n" +
+        "  \"securityScore\": 90,\n" +
+        "  \"performanceScore\": 70,\n" +
+        "  \"summary\": \"Short summary here.\",\n" +
+        "  \"issues\": [\"issue 1\", \"issue 2\"],\n" +
+        "  \"suggestions\": [\"suggestion 1\"],\n" +
+        "  \"securityWarnings\": [\"warning 1\"],\n" +
+        "  \"performanceNotes\": [\"note 1\"]\n" +
+        "}\n\n" +
+        "Code:\n" + code;
   }
 
   private String buildRefactorPrompt(String language, String code) {
-    return """
-        You are a senior software engineer. Refactor the following %s code.
-        Return ONLY the refactored code. No explanation, no markdown fences.
-
-        Code:
-        %s
-        """.formatted(language, code);
+    return "You are a senior software engineer. Refactor this " + language + " code.\n" +
+        "Return ONLY the refactored code. No markdown, no explanation.\n\n" +
+        "Code:\n" + code;
   }
 }

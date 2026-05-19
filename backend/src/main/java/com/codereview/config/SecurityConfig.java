@@ -41,22 +41,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/auth/**",
-                    "/h2-console/**",
-                    "/actuator/health"
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            // Allow H2 console frames
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/test/**",
+                                "/h2-console/**",
+                                "/actuator/health")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                // Allow H2 console frames
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
     }
