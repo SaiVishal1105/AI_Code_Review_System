@@ -32,13 +32,12 @@ public class TestController {
     @GetMapping("/config")
     public Map<String, String> config() {
         return Map.of(
-            "apiUrl", apiUrl,
-            "model", model,
-            "keyLoaded", apiKey != null && !apiKey.isBlank() ? "YES" : "NO",
-            "keyPreview", apiKey != null && apiKey.length() > 10
-                ? apiKey.substring(0, 8) + "..." + apiKey.substring(apiKey.length() - 4)
-                : "MISSING"
-        );
+                "apiUrl", apiUrl,
+                "model", model,
+                "keyLoaded", apiKey != null && !apiKey.isBlank() ? "YES" : "NO",
+                "keyPreview", apiKey != null && apiKey.length() > 10
+                        ? apiKey.substring(0, 8) + "..." + apiKey.substring(apiKey.length() - 4)
+                        : "MISSING");
     }
 
     @GetMapping("/groq")
@@ -48,10 +47,9 @@ public class TestController {
                     .connectTimeout(Duration.ofSeconds(15))
                     .build();
             Map<String, Object> body = Map.of(
-                "model", model,
-                "messages", List.of(Map.of("role", "user", "content", "Say: OK")),
-                "max_tokens", 10
-            );
+                    "model", model,
+                    "messages", List.of(Map.of("role", "user", "content", "Say: OK")),
+                    "max_tokens", 10);
             String jsonBody = objectMapper.writeValueAsString(body);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
@@ -73,5 +71,14 @@ public class TestController {
         } catch (Exception e) {
             return Map.of("status", "EXCEPTION", "error", e.getClass().getSimpleName(), "message", e.getMessage());
         }
+    }
+
+    @GetMapping("/key")
+    public Map<String, String> checkKey() {
+        return Map.of(
+                "keyPreview", apiKey != null && apiKey.length() > 10
+                        ? apiKey.substring(0, 8) + "..." + apiKey.substring(apiKey.length() - 4)
+                        : "MISSING OR TOO SHORT",
+                "keyLength", String.valueOf(apiKey != null ? apiKey.length() : 0));
     }
 }
