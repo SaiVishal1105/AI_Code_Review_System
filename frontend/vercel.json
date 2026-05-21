@@ -1,6 +1,12 @@
 {
-    "buildCommand": "npm run build",
+    "buildCommand": "chmod +x node_modules/.bin/react-scripts && CI=false react-scripts build",
     "outputDirectory": "build",
-    "installCommand": "npm install",
-    "framework": "create-react-app"
+    "installCommand": "npm install --legacy-peer-deps",
+    "framework": "create-react-app",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
 }
